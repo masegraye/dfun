@@ -1,0 +1,12 @@
+{
+	"name": "000.vibed",
+	"description": "",
+	"homepage": "",
+	"copyright": "",
+	"authors": [
+		"Mason Browne"
+	],
+	"dependencies": {
+        "vibe-d" : "~master"
+	}
+}
