@@ -46,8 +46,13 @@ class MyStack(T) : Stack!T {
     }
 }
 
+alias MyStack!string StringStack;
+
+ref string frobble(StringStack s) {
+    return s.top;
+}
+
 unittest {
-    alias MyStack!string StringStack;
 
     auto ts = new StringStack;
 
@@ -61,6 +66,9 @@ unittest {
     popped = ts.pop();
     assert("hello" == popped);
     assert(ts.length == 0);
+
+    ts.push("frobble");
+    assert("frobble" == ts.frobble);
 }
 
 void main() {};
