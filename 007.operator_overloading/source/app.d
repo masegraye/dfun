@@ -76,10 +76,11 @@ unittest {
     obj.addMethod("testOne",
         (Dynamic, Variant[]) {
             writeln("testOne");
-            return Variant();
+            return Variant(1);
     });
 
-    obj.testOne();
+
+    assert(1 == obj.testOne());
 
 
 }
