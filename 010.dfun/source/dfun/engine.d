@@ -1,19 +1,21 @@
 @safe
 
 import utils;
+import lifecycle;
 
-class Universe {
+interface IUniverseConfig : IAppConfig {}
 
-    this() {
-        this._guard = new StateGuard("started", "disposed");
+class UniverseConfig : IUniverseConfig {};
+
+class Universe : App!IUniverseConfig {
+
+    this(IAppContext context, IUniverseConfig config) {
+        super(context, config);
     }
 
-    void start() {
-        synchronized(_guard) {
-            _guard.mark("started");
-        }
-    }
+    override
+    void on() {}
 
-private:
-    StateGuard _guard;
+    override
+    void off() {}
 }

@@ -3,6 +3,8 @@ import std.traits;
 
 interface IAppContext {}
 
+class DefaultContext : IAppContext {}
+
 interface IAppConfig {}
 
 interface IApp(T) {
