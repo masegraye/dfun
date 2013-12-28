@@ -1,5 +1,6 @@
 import std.stdio;
 import std.traits;
+import utils;
 
 interface IAppContext {}
 
@@ -24,10 +25,15 @@ abstract class App(T) : IApp!T {
     this(IAppContext, T)(IAppContext ctx, T config) if (isAssignable!(IAppConfig, T)) {
         this.config = config;
         this.ctx = ctx;
+        this.guard = new StateGuard("start");
     }
 
     override
     void start() {
+        synchronized(guard) {
+            guard.prevent("start");
+            guard.mark("start");
+        }
         on();
     }
 
@@ -55,6 +61,7 @@ protected:
 private:
     IAppConfig config;
     IAppContext ctx;
+    StateGuard guard;
 }
 
 

@@ -39,10 +39,18 @@ class StateGuard {
         states[state] = true;
     }
 
+    void prevent(string state) {
+        _checkValidState(state);
+        if (states[state]) {
+            throw new InvalidStateException("state prevention requested, but already marked", state);
+        }
+    }
+
     bool isMarked(string state) {
         _checkValidState(state);
         return states[state];
     }
+
 
 
 private:
