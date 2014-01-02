@@ -11,7 +11,7 @@ int main()
     DerelictSDL2Image.load();
 
     game = new Game();
-    if (!game.initialize("Chapter 1", 100, 100, 640, 480, 0)) {
+    if (!game.initialize("Chapter 1", 100, 100, 640, 480)) {
         return 1;
     }
 
@@ -29,10 +29,10 @@ class Game {
     this() {}
     ~this() {}
 
-    bool initialize(const char* title, int xpos, int ypos, int height, int width, int flags) {
+    bool initialize(const char* title, int xpos, int ypos, int height, int width, bool fullscreen = false) {
         if (SDL_Init(SDL_INIT_EVERYTHING) >= 0) {
             // create window
-            m_pWindow = SDL_CreateWindow(title, xpos, ypos, height, width, flags);
+            m_pWindow = SDL_CreateWindow(title, xpos, ypos, height, width, (fullscreen ? SDL_WINDOW_FULLSCREEN : 0));
             if (m_pWindow) {
                 // create renderer
                 m_pRenderer = SDL_CreateRenderer(m_pWindow, -1, 0);
