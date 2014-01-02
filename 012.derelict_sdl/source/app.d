@@ -42,6 +42,20 @@ class Game {
         } else {
             return false;
         }
+
+        SDL_Surface* pTempSurface = IMG_Load("./public/assets/arc2.png");
+
+        m_pTexture = SDL_CreateTextureFromSurface(m_pRenderer, pTempSurface);
+
+        SDL_FreeSurface(pTempSurface);
+
+        SDL_QueryTexture(m_pTexture, null, null, &m_sourceRectangle.w, &m_sourceRectangle.h);
+
+        m_destinationRectangle.x = m_sourceRectangle.x = 0;
+        m_destinationRectangle.y = m_sourceRectangle.y = 0;
+        m_destinationRectangle.w = m_sourceRectangle.w;
+        m_destinationRectangle.h = m_sourceRectangle.h;
+
         m_bRunning = true;
         return true;
     }
@@ -51,6 +65,9 @@ class Game {
         // SDL_SetRenderDrawColor(m_pRenderer, 0, 0, 0, 255);
         // clear the window to black
         SDL_RenderClear(m_pRenderer);
+
+        SDL_RenderCopy(m_pRenderer, m_pTexture, &m_sourceRectangle, &m_destinationRectangle);
+
         // Show the window
         SDL_RenderPresent(m_pRenderer);
     }
@@ -85,6 +102,10 @@ private:
     bool m_bRunning;
     SDL_Window* m_pWindow;
     SDL_Renderer* m_pRenderer;
+
+    SDL_Texture* m_pTexture;
+    SDL_Rect m_sourceRectangle;
+    SDL_Rect m_destinationRectangle;
 
 }
 
