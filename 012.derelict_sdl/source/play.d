@@ -100,8 +100,10 @@ class Game {
             return false;
         }
 
-        m_textureManager = TextureManager.Instance();
-        m_textureManager.load("public/assets/claudius.png", "claudius", m_pRenderer);
+        TextureManager.Instance().load("public/assets/claudius.png", "claudius", m_pRenderer);
+
+        m_player = new Player();
+        m_player.load(320, 240, 32, 60, "claudius");
 
         m_bRunning = true;
         return true;
@@ -114,9 +116,11 @@ class Game {
         // clear the window to black
         SDL_RenderClear(m_pRenderer);
 
-        m_textureManager.draw("claudius", 0, 0, 32, 60, m_pRenderer);
+        TextureManager.Instance().draw("claudius", 0, 0, 32, 60, m_pRenderer);
 
-        m_textureManager.drawFrame("claudius", 320, 240, 32, 60, 1, m_currentFrame, m_pRenderer);
+        TextureManager.Instance().drawFrame("claudius", 120, 240, 32, 60, 1, m_currentFrame, m_pRenderer);
+
+        m_player.draw(m_pRenderer);
 
         // Show the window
         SDL_RenderPresent(m_pRenderer);
@@ -124,6 +128,8 @@ class Game {
 
     void update() {
         m_currentFrame = cast(int)((SDL_GetTicks() / 100) % 6);
+
+        m_player.update();
     }
 
     void handleEvents() {
@@ -155,7 +161,77 @@ private:
     int m_currentFrame;
     SDL_Window* m_pWindow;
     SDL_Renderer* m_pRenderer;
-    TextureManager m_textureManager;
+
+    Player m_player;
 }
 
+class Player : GameObject {
 
+
+    override void load(int x, int y,
+        int width, int height,
+        string textureID) {
+
+        super.load(x, y, width, height, textureID);
+    }
+
+    override void draw(SDL_Renderer* pRenderer) {
+        super.draw(pRenderer);
+    }
+
+    override void update() {
+        m_x -= 1;
+    }
+
+    override void clean() {
+        super.clean();
+    }
+}
+
+class GameObject {
+
+    void load(int x, int y,
+        int width, int height,
+        string textureID) {
+
+        m_textureID = textureID;
+
+        m_x = x;
+        m_y = y;
+
+        m_width = width;
+        m_height = height;
+
+        m_currentRow = 1;
+        m_currentFrame = 1;
+    }
+
+    void draw(SDL_Renderer* pRenderer) {
+        TextureManager.Instance().drawFrame(
+            m_textureID,
+            m_x, m_y,
+            m_width, m_height,
+            m_currentRow, m_currentFrame,
+            pRenderer);
+    }
+
+    void update() {
+        m_x += 1;
+    }
+
+    void clean() {
+
+    }
+
+protected:
+    string m_textureID;
+
+    int m_currentFrame;
+    int m_currentRow;
+
+    int m_x;
+    int m_y;
+
+    int m_width;
+    int m_height;
+}

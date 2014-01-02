@@ -1,6 +1,8 @@
 import std.stdio;
 import std.math;
 
+import derelict.sdl2.sdl;
+
 import play;
 
 Game game;
@@ -17,6 +19,8 @@ int main()
         game.handleEvents();
         game.update();
         game.render();
+
+        SDL_Delay(10);
     }
     game.clean();
     return 0;
