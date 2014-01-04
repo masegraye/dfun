@@ -1,5 +1,6 @@
 import derelict.sdl2.sdl;
 import derelict.sdl2.image;
+import std.container;
 
 shared static this() {
     DerelictSDL2.load();
@@ -102,8 +103,14 @@ class Game {
 
         TextureManager.Instance().load("public/assets/claudius.png", "claudius", m_pRenderer);
 
-        m_player = new Player();
-        m_player.load(320, 240, 32, 60, "claudius");
+        Player player = new Player();
+        player.load(320, 240, 32, 60, "claudius");
+
+        Enemy enemy = new Enemy();
+        enemy.load(420, 240, 32, 60, "claudius");
+
+        m_gameObjects.insertBack(player);
+        m_gameObjects.insertBack(enemy);
 
         m_bRunning = true;
         return true;
@@ -120,7 +127,10 @@ class Game {
 
         TextureManager.Instance().drawFrame("claudius", 120, 240, 32, 60, 1, m_currentFrame, m_pRenderer);
 
-        m_player.draw(m_pRenderer);
+        foreach(GameObject obj ; m_gameObjects) {
+            obj.draw(m_pRenderer);
+        }
+
 
         // Show the window
         SDL_RenderPresent(m_pRenderer);
@@ -129,7 +139,10 @@ class Game {
     void update() {
         m_currentFrame = cast(int)((SDL_GetTicks() / 100) % 6);
 
-        m_player.update();
+        foreach(GameObject obj ; m_gameObjects) {
+            obj.update();
+        }
+
     }
 
     void handleEvents() {
@@ -162,7 +175,7 @@ private:
     SDL_Window* m_pWindow;
     SDL_Renderer* m_pRenderer;
 
-    Player m_player;
+    DList!GameObject m_gameObjects;
 }
 
 class Player : GameObject {
@@ -181,11 +194,30 @@ class Player : GameObject {
 
     override void update() {
         m_x -= 1;
+        m_currentFrame = cast(int)((SDL_GetTicks() / 100) % 6);
     }
 
     override void clean() {
         super.clean();
     }
+}
+
+class Enemy : GameObject {
+    override void load(int x, int y, int width, int height, string textureID) {
+        super.load(x, y, width, height, textureID);
+    }
+    override void draw(SDL_Renderer* pRenderer) {
+        super.draw(pRenderer);
+    }
+    override void update() {
+        m_x += 1;
+        m_y += 1;
+        m_currentFrame = cast(int)((SDL_GetTicks() / 100) % 6);
+    }
+    override void clean() {
+        super.clean();
+    }
+
 }
 
 class GameObject {
@@ -234,4 +266,5 @@ protected:
 
     int m_width;
     int m_height;
+
 }
