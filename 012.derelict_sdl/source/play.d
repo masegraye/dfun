@@ -10,6 +10,7 @@ shared static this() {
 class TextureManager {
     private this() {};
 
+    @property
     static TextureManager Instance() {
         if (s_instance is null) {
             s_instance = new TextureManager();
@@ -87,6 +88,17 @@ private:
 
 
 class Game {
+
+    private this() {}
+
+    @property
+    static Game Instance() {
+        if (s_instance is null) {
+            s_instance = new Game();
+        }
+        return s_instance;
+    }
+
     bool initialize(const char* title, int xpos, int ypos, int height, int width, bool fullscreen = false) {
         if (SDL_Init(SDL_INIT_EVERYTHING) >= 0) {
             // create window
@@ -101,16 +113,9 @@ class Game {
             return false;
         }
 
-        TextureManager.Instance().load("public/assets/claudius.png", "claudius", m_pRenderer);
+        TextureManager.Instance.load("public/assets/claudius.png", "claudius", m_pRenderer);
 
-        Player player = new Player();
-        player.load(320, 240, 32, 60, "claudius");
-
-        Enemy enemy = new Enemy();
-        enemy.load(420, 240, 32, 60, "claudius");
-
-        m_gameObjects.insertBack(player);
-        m_gameObjects.insertBack(enemy);
+        m_gameObjects.insertBack(new Player(LoaderParams(100, 100, 32, 60, "claudius")));
 
         m_bRunning = true;
         return true;
@@ -123,12 +128,12 @@ class Game {
         // clear the window to black
         SDL_RenderClear(m_pRenderer);
 
-        TextureManager.Instance().draw("claudius", 0, 0, 32, 60, m_pRenderer);
+        //TextureManager.Instance().draw("claudius", 0, 0, 32, 60, m_pRenderer);
 
-        TextureManager.Instance().drawFrame("claudius", 120, 240, 32, 60, 1, m_currentFrame, m_pRenderer);
+        //TextureManager.Instance().drawFrame("claudius", 120, 240, 32, 60, 1, m_currentFrame, m_pRenderer);
 
         foreach(GameObject obj ; m_gameObjects) {
-            obj.draw(m_pRenderer);
+            obj.draw();
         }
 
 
@@ -169,7 +174,14 @@ class Game {
         return m_bRunning;
     }
 
+    @property
+    SDL_Renderer* renderer() {
+        return m_pRenderer;
+    }
+
 private:
+    static Game s_instance;
+
     bool m_bRunning;
     int m_currentFrame;
     SDL_Window* m_pWindow;
@@ -178,18 +190,10 @@ private:
     DList!GameObject m_gameObjects;
 }
 
-class Player : GameObject {
 
-
-    override void load(int x, int y,
-        int width, int height,
-        string textureID) {
-
-        super.load(x, y, width, height, textureID);
-    }
-
-    override void draw(SDL_Renderer* pRenderer) {
-        super.draw(pRenderer);
+class Player : SDLGameObject {
+    this(LoaderParams params) {
+        super(params);
     }
 
     override void update() {
@@ -197,74 +201,61 @@ class Player : GameObject {
         m_currentFrame = cast(int)((SDL_GetTicks() / 100) % 6);
     }
 
-    override void clean() {
-        super.clean();
-    }
+    override void clean() {}
 }
 
-class Enemy : GameObject {
-    override void load(int x, int y, int width, int height, string textureID) {
-        super.load(x, y, width, height, textureID);
-    }
-    override void draw(SDL_Renderer* pRenderer) {
-        super.draw(pRenderer);
-    }
-    override void update() {
-        m_x += 1;
-        m_y += 1;
-        m_currentFrame = cast(int)((SDL_GetTicks() / 100) % 6);
-    }
-    override void clean() {
-        super.clean();
-    }
-
-}
-
-class GameObject {
-
-    void load(int x, int y,
-        int width, int height,
-        string textureID) {
-
-        m_textureID = textureID;
-
-        m_x = x;
-        m_y = y;
-
-        m_width = width;
-        m_height = height;
+class SDLGameObject : GameObject {
+    this(LoaderParams params) {
+        super(params);
+        m_x = params.x;
+        m_y = params.y;
+        m_width = params.width;
+        m_height = params.height;
+        m_textureID = params.textureID;
 
         m_currentRow = 1;
         m_currentFrame = 1;
     }
 
-    void draw(SDL_Renderer* pRenderer) {
-        TextureManager.Instance().drawFrame(
-            m_textureID,
-            m_x, m_y,
-            m_width, m_height,
+    override void draw() {
+        TextureManager.Instance.drawFrame(m_textureID,
+            m_x, m_y, m_width,
+            m_height,
             m_currentRow, m_currentFrame,
-            pRenderer);
-    }
-
-    void update() {
-        m_x += 1;
-    }
-
-    void clean() {
-
+            Game.Instance.renderer);
     }
 
 protected:
-    string m_textureID;
-
-    int m_currentFrame;
-    int m_currentRow;
-
     int m_x;
     int m_y;
-
     int m_width;
     int m_height;
+    int m_currentRow;
+    int m_currentFrame;
+    string m_textureID;
+}
 
+
+
+
+
+
+
+
+
+abstract class GameObject {
+    abstract void draw();
+    abstract void update();
+    abstract void clean();
+protected:
+    this(LoaderParams params) {}
+
+}
+
+struct LoaderParams {
+    int x;
+    int y;
+    int width;
+    int height;
+    string textureID;
 }
