@@ -2,8 +2,15 @@ import std.stdio;
 import std.math;
 
 import derelict.sdl2.sdl;
+import derelict.sdl2.image;
 
-import play;
+import play.d;
+
+
+shared static this() {
+    DerelictSDL2.load();
+    DerelictSDL2Image.load();
+}
 
 Game game;
 

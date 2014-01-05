@@ -1,90 +1,11 @@
+module play.core.engine;
+
+import play.core.texturemanager;
+
 import derelict.sdl2.sdl;
 import derelict.sdl2.image;
+
 import std.container;
-
-shared static this() {
-    DerelictSDL2.load();
-    DerelictSDL2Image.load();
-}
-
-class TextureManager {
-    private this() {};
-
-    @property
-    static TextureManager Instance() {
-        if (s_instance is null) {
-            s_instance = new TextureManager();
-        }
-        return s_instance;
-    }
-
-    bool load(string fileName, string id, SDL_Renderer* pRenderer) {
-
-        SDL_Surface* pTempSurface = IMG_Load("./public/assets/claudius.png");
-
-        SDL_Texture* pTexture = SDL_CreateTextureFromSurface(pRenderer, pTempSurface);
-
-        SDL_FreeSurface(pTempSurface);
-
-        if (pTexture) {
-            m_textureMap[id] = pTexture;
-            return true;
-        }
-
-        return false;
-    }
-
-    void draw(string id,
-        int x, int y,
-        int width, int height,
-        SDL_Renderer* pRenderer,
-        SDL_RendererFlip flip = SDL_FLIP_NONE) {
-
-        SDL_Rect srcRect;
-        SDL_Rect destRect;
-
-        srcRect.x = srcRect.y = 0;
-        srcRect.w = destRect.w = width;
-        srcRect.h = destRect.h = height;
-        destRect.x = x;
-        destRect.y = y;
-
-        SDL_RenderCopyEx(pRenderer, m_textureMap[id],
-            &srcRect, &destRect,
-            0.0, cast(SDL_Point*)0,
-            flip);
-    }
-
-    void drawFrame(string id,
-        int x, int y,
-        int width, int height,
-        int currentRow, int currentFrame,
-        SDL_Renderer* pRenderer,
-        SDL_RendererFlip flip = SDL_FLIP_NONE) {
-
-        SDL_Rect srcRect;
-        SDL_Rect destRect;
-
-        srcRect.x = width * currentFrame;
-        srcRect.y = height * (currentRow - 1);
-        srcRect.w = destRect.w = width;
-        srcRect.h = destRect.h = height;
-
-        destRect.x = x;
-        destRect.y = y;
-
-        SDL_RenderCopyEx(pRenderer, m_textureMap[id],
-            &srcRect, &destRect,
-            0.0, cast(SDL_Point*) 0,
-            flip);
-
-    }
-
-private:
-    static TextureManager s_instance;
-    SDL_Texture*[string] m_textureMap;
-}
-
 
 
 class Game {
@@ -99,16 +20,25 @@ class Game {
         return s_instance;
     }
 
-    bool initialize(const char* title, int xpos, int ypos, int height, int width, bool fullscreen = false) {
+    bool initialize(const char* title,
+        int xpos, int ypos,
+        int height, int width,
+        bool fullscreen = false) {
+
         if (SDL_Init(SDL_INIT_EVERYTHING) >= 0) {
             // create window
-            m_pWindow = SDL_CreateWindow(title, xpos, ypos, height, width, (fullscreen ? SDL_WINDOW_FULLSCREEN : 0));
+            m_pWindow = SDL_CreateWindow(title,
+                xpos, ypos,
+                height, width,
+                (fullscreen ? SDL_WINDOW_FULLSCREEN : 0));
+
             if (m_pWindow) {
                 // create renderer
                 m_pRenderer = SDL_CreateRenderer(m_pWindow, -1, 0);
             } else {
                 return false;
             }
+
         } else {
             return false;
         }
@@ -135,7 +65,6 @@ class Game {
         foreach(GameObject obj ; m_gameObjects) {
             obj.draw();
         }
-
 
         // Show the window
         SDL_RenderPresent(m_pRenderer);
@@ -175,7 +104,7 @@ class Game {
     }
 
     @property
-    SDL_Renderer* renderer() {
+    const(SDL_Renderer)* renderer() {
         return m_pRenderer;
     }
 
@@ -234,14 +163,6 @@ protected:
     int m_currentFrame;
     string m_textureID;
 }
-
-
-
-
-
-
-
-
 
 abstract class GameObject {
     abstract void draw();
