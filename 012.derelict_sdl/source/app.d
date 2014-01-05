@@ -17,7 +17,6 @@ Game game;
 int main()
 {
 
-
     if (!Game.Instance().initialize("Chapter 1", 100, 100, 640, 480)) {
         return 1;
     }

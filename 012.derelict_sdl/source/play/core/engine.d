@@ -1,6 +1,7 @@
 module play.core.engine;
 
 import play.core.texturemanager;
+import play.core.geo;
 
 import derelict.sdl2.sdl;
 import derelict.sdl2.image;
@@ -126,8 +127,10 @@ class Player : SDLGameObject {
     }
 
     override void update() {
-        m_x -= 1;
         m_currentFrame = cast(int)((SDL_GetTicks() / 100) % 6);
+        // m_acceleration.x = 1;
+        // m_velocity.x = 1;
+        super.update();
     }
 
     override void clean() {}
@@ -136,8 +139,10 @@ class Player : SDLGameObject {
 class SDLGameObject : GameObject {
     this(LoaderParams params) {
         super(params);
-        m_x = params.x;
-        m_y = params.y;
+        m_position = Vector2D(params.x, params.y);
+        m_velocity = Vector2D(0, 0);
+        m_acceleration = Vector2D(0, 0);
+
         m_width = params.width;
         m_height = params.height;
         m_textureID = params.textureID;
@@ -146,17 +151,24 @@ class SDLGameObject : GameObject {
         m_currentFrame = 1;
     }
 
+    override void update() {
+        m_velocity += m_acceleration;
+        m_position += m_velocity;
+    }
+
     override void draw() {
         TextureManager.Instance.drawFrame(m_textureID,
-            m_x, m_y, m_width,
-            m_height,
+            cast(int)m_position.x, cast(int)m_position.y,
+            m_width, m_height,
             m_currentRow, m_currentFrame,
             Game.Instance.renderer);
     }
 
 protected:
-    int m_x;
-    int m_y;
+    Vector2D m_position;
+    Vector2D m_velocity;
+    Vector2D m_acceleration;
+
     int m_width;
     int m_height;
     int m_currentRow;
