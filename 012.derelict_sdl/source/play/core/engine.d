@@ -2,10 +2,12 @@ module play.core.engine;
 
 import play.core.texturemanager;
 import play.core.geo;
+import play.core.input : InputHandler;
 
 import derelict.sdl2.sdl;
 import derelict.sdl2.image;
 
+import std.stdio;
 import std.container;
 
 
@@ -43,6 +45,7 @@ class Game {
         } else {
             return false;
         }
+        InputHandler.Instance.intializeJoysticks();
 
         TextureManager.Instance.load("public/assets/claudius.png", "claudius", m_pRenderer);
 
@@ -73,7 +76,6 @@ class Game {
 
     void update() {
         m_currentFrame = cast(int)((SDL_GetTicks() / 100) % 6);
-
         foreach(GameObject obj ; m_gameObjects) {
             obj.update();
         }
@@ -81,22 +83,18 @@ class Game {
     }
 
     void handleEvents() {
-        SDL_Event event;
-        if(SDL_PollEvent(&event)) {
-            switch(event.type) {
-                case SDL_QUIT:
-                    m_bRunning = false;
-                break;
-                default:
-                break;
-            }
-        }
+        InputHandler.Instance.update();
     }
 
     void clean() {
+        InputHandler.Instance.clean();
         SDL_DestroyWindow(m_pWindow);
         SDL_DestroyRenderer(m_pRenderer);
         SDL_Quit();
+    }
+
+    void quit() {
+        m_bRunning = false;
     }
 
     @property
@@ -124,16 +122,47 @@ private:
 class Player : SDLGameObject {
     this(LoaderParams params) {
         super(params);
+        inputMult = 3;
     }
 
     override void update() {
+        m_velocity.x = 0;
+        m_velocity.y = 0;
+
         m_currentFrame = cast(int)((SDL_GetTicks() / 100) % 6);
-        // m_acceleration.x = 1;
-        // m_velocity.x = 1;
+
+        handleInput();
         super.update();
     }
 
     override void clean() {}
+
+private:
+    void handleInput() {
+        if (InputHandler.Instance.joysticksInitialized()) {
+            if (InputHandler.Instance.xvalue(0, 1) > 0 ||
+                InputHandler.Instance.xvalue(0, 1) < 0) {
+
+                m_velocity.x = (inputMult * InputHandler.Instance.xvalue(0, 1));
+            }
+
+            if (InputHandler.Instance.yvalue(0, 1) > 0 ||
+                InputHandler.Instance.yvalue(0, 1) < 0) {
+                m_velocity.y = (inputMult * InputHandler.Instance.yvalue(0, 1));
+            }
+
+            if (InputHandler.Instance.xvalue(0, 2) > 0 ||
+                InputHandler.Instance.xvalue(0, 2) < 0) {
+                m_velocity.x = (inputMult * InputHandler.Instance.xvalue(0, 2));
+            }
+
+            if (InputHandler.Instance.yvalue(0, 2) > 0 ||
+                InputHandler.Instance.yvalue(0, 2) < 0) {
+                m_velocity.y = (inputMult * InputHandler.Instance.yvalue(0, 2));
+            }
+        }
+    }
+    int inputMult;
 }
 
 class SDLGameObject : GameObject {
