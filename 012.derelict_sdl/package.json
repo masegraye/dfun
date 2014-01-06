@@ -6,13 +6,5 @@
 	],
 	"dependencies": {
         "derelict-sdl2": "~master"
-	},
-    "configurations": [
-        {
-            "name" : "beta",
-            "targetType": "executable",
-            "targetName": "Funky Town",
-            "versions": ["PLAY_ENABLE_DEBUG_LOGGING"]
-        }
-    ]
+	}
 }

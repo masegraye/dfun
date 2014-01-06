@@ -19,6 +19,12 @@ class Pair(T) {
     T two;
 }
 
+enum {
+    LEFT = 0,
+    MIDDLE = 1,
+    RIGHT = 2
+}
+
 alias Pair!Vector2D VectorPair;
 
 class InputHandler {
@@ -128,6 +134,36 @@ class InputHandler {
              * END BUTTONS
              */
 
+            /**
+             * MOUSE BUTTONS
+             */
+            if (event.type == SDL_MOUSEBUTTONDOWN) {
+                if (event.button.button == SDL_BUTTON_LEFT) {
+                    m_mouseButtonStates[LEFT] = true;
+                }
+                if (event.button.button == SDL_BUTTON_MIDDLE) {
+                    m_mouseButtonStates[MIDDLE] = true;
+                }
+                if (event.button.button == SDL_BUTTON_RIGHT) {
+                    m_mouseButtonStates[RIGHT] = true;
+                }
+            }
+
+            if (event.type == SDL_MOUSEBUTTONUP) {
+                if (event.button.button == SDL_BUTTON_LEFT) {
+                    m_mouseButtonStates[LEFT] = false;
+                }
+                if (event.button.button == SDL_BUTTON_MIDDLE) {
+                    m_mouseButtonStates[MIDDLE] = false;
+                }
+                if (event.button.button == SDL_BUTTON_RIGHT) {
+                    m_mouseButtonStates[RIGHT] = false;
+                }
+            }
+            /**
+             * MOUSE BUTTONS
+             */
+
         }
     }
 
@@ -166,6 +202,9 @@ class InputHandler {
         return m_buttonStates[joy][buttonNumber];
     }
 
+    bool getMouseButtonState(int buttonNumber) {
+        return m_mouseButtonStates[buttonNumber];
+    }
 
     void intializeJoysticks() {
         if (SDL_WasInit(SDL_INIT_JOYSTICK) == 0) {
@@ -207,10 +246,14 @@ private:
     this(){
         m_bJoysticksInitialized = false;
         m_joysticks = JoystickList();
+        for(int i = 0; i < 3; i++) {
+            m_mouseButtonStates.insertBack(false);
+        }
     }
 
     Array!VectorPair m_joystickValues;
     Array!(Array!bool) m_buttonStates;
+    Array!bool m_mouseButtonStates;
 
     bool m_bJoysticksInitialized;
     JoystickList m_joysticks;
