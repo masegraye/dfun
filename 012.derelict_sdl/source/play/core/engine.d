@@ -126,6 +126,8 @@ class Player : SDLGameObject {
     }
 
     override void update() {
+        m_velocityMultiplier = 1;
+
         m_velocity.x = 0;
         m_velocity.y = 0;
 
@@ -160,6 +162,28 @@ private:
                 InputHandler.Instance.yvalue(0, 2) < 0) {
                 m_velocity.y = (inputMult * InputHandler.Instance.yvalue(0, 2));
             }
+
+            if (InputHandler.Instance.getButtonState(0, 14)) {
+                m_velocity.x = (inputMult * 1);
+            }
+
+            if (InputHandler.Instance.getButtonState(0, 13)) {
+                m_velocity.x = (inputMult * -1);
+            }
+
+            if (InputHandler.Instance.getButtonState(0, 12)) {
+                m_velocity.y = (inputMult * 1);
+            }
+
+            if (InputHandler.Instance.getButtonState(0, 11)) {
+                m_velocity.y = (inputMult * -1);
+            }
+
+            if (InputHandler.Instance.getButtonState(0, 2)) {
+                m_velocityMultiplier = 3;
+            }
+
+            m_velocity *= m_velocityMultiplier;
         }
     }
     int inputMult;
@@ -198,6 +222,7 @@ protected:
     Vector2D m_velocity;
     Vector2D m_acceleration;
 
+    int m_velocityMultiplier;
     int m_width;
     int m_height;
     int m_currentRow;
