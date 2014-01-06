@@ -19,7 +19,7 @@ int main()
 {
     uint frameStart, frameTime;
 
-    if (!Game.Instance().initialize("Chapter 1", 100, 100, 640, 480)) {
+    if (!Game.Instance().initialize("WOO!", 100, 100, 640, 480)) {
         return 1;
     }
 

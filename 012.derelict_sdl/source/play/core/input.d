@@ -9,15 +9,17 @@ import std.range : walkLength;
 
 alias DList!(SDL_Joystick*) JoystickList;
 
-class VectorPair {
-    this(Vector2D one, Vector2D two) {
+class Pair(T) {
+    this(T one, T two) {
         this.one = one;
         this.two = two;
     }
 
-    Vector2D one;
-    Vector2D two;
+    T one;
+    T two;
 }
+
+alias Pair!Vector2D VectorPair;
 
 class InputHandler {
 
@@ -36,6 +38,9 @@ class InputHandler {
                 Game.Instance.quit();
             }
 
+            /**
+             * JOYSTICKS
+             */
             if (event.type == SDL_JOYAXISMOTION) {
                 int whichOne = event.jaxis.which;
 
@@ -95,8 +100,34 @@ class InputHandler {
                         }
                     }
                 }
-
             }
+            /**
+             * END JOYSTICKS
+             */
+
+
+            /**
+             * BUTTONS
+             */
+            if (event.type == SDL_JOYBUTTONDOWN) {
+                int whichOne = event.jaxis.which;
+                m_buttonStates[whichOne][event.jbutton.button] = true;
+                version(PLAY_ENABLE_DEBUG_LOGGING) {
+                    writeln("Button down ", event.jbutton.button);
+                }
+            }
+
+            if (event.type == SDL_JOYBUTTONUP) {
+                int whichOne = event.jaxis.which;
+                m_buttonStates[whichOne][event.jbutton.button] = false;
+                version(PLAY_ENABLE_DEBUG_LOGGING) {
+                    writeln("Button up ", event.jbutton.button);
+                }
+            }
+            /**
+             * END BUTTONS
+             */
+
         }
     }
 
@@ -119,6 +150,7 @@ class InputHandler {
         }
         return 0;
     }
+
     int yvalue(int joy, int stick) {
         if (m_joystickValues.length > 0) {
             if (stick == 1) {
@@ -129,6 +161,11 @@ class InputHandler {
         }
         return 0;
     }
+
+    bool getButtonState(int joy, int buttonNumber) {
+        return m_buttonStates[joy][buttonNumber];
+    }
+
 
     void intializeJoysticks() {
         if (SDL_WasInit(SDL_INIT_JOYSTICK) == 0) {
@@ -141,6 +178,13 @@ class InputHandler {
                 if(joy) {
                     m_joysticks.insertBack(joy);
                     m_joystickValues.insertBack(new VectorPair(Vector2D(0,0), Vector2D(0,0)));
+
+                    Array!bool tempButtons;
+                    for (int j = 0; j < SDL_JoystickNumButtons(joy); j++) {
+                        tempButtons.insertBack(false);
+                    }
+                    m_buttonStates.insertBack(tempButtons);
+
                 } else {
                     writeln(stderr, "Error %s", SDL_GetError());
                 }
@@ -166,6 +210,8 @@ private:
     }
 
     Array!VectorPair m_joystickValues;
+    Array!(Array!bool) m_buttonStates;
+
     bool m_bJoysticksInitialized;
     JoystickList m_joysticks;
     static InputHandler s_instance;
