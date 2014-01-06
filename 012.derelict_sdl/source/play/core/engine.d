@@ -183,6 +183,9 @@ private:
                 m_velocityMultiplier = 3;
             }
 
+            Vector2D vec = InputHandler.Instance.getMousePosition();
+            m_velocity = (vec - m_position) / 100;
+
             m_velocity *= m_velocityMultiplier;
         }
     }

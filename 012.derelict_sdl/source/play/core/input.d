@@ -161,9 +161,13 @@ class InputHandler {
                 }
             }
             /**
-             * MOUSE BUTTONS
+             * END MOUSE BUTTONS
              */
 
+             if (event.type == SDL_MOUSEMOTION) {
+                m_mousePosition.x = event.motion.x;
+                m_mousePosition.y = event.motion.y;
+             }
         }
     }
 
@@ -204,6 +208,10 @@ class InputHandler {
 
     bool getMouseButtonState(int buttonNumber) {
         return m_mouseButtonStates[buttonNumber];
+    }
+
+    ref Vector2D getMousePosition() {
+        return m_mousePosition;
     }
 
     void intializeJoysticks() {
@@ -254,6 +262,7 @@ private:
     Array!VectorPair m_joystickValues;
     Array!(Array!bool) m_buttonStates;
     Array!bool m_mouseButtonStates;
+    Vector2D m_mousePosition;
 
     bool m_bJoysticksInitialized;
     JoystickList m_joysticks;
