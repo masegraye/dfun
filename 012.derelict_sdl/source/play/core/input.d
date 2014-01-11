@@ -44,6 +44,8 @@ class InputHandler {
                 Game.Instance.quit();
             }
 
+            m_keystates = SDL_GetKeyboardState(null);
+
             /**
              * JOYSTICKS
              */
@@ -214,6 +216,15 @@ class InputHandler {
         return m_mousePosition;
     }
 
+    bool isKeyDown(SDL_Scancode key) {
+        if (m_keystates) {
+            if (m_keystates[key] == 1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     void intializeJoysticks() {
         if (SDL_WasInit(SDL_INIT_JOYSTICK) == 0) {
             SDL_InitSubSystem(SDL_INIT_JOYSTICK);
@@ -263,10 +274,12 @@ private:
     Array!(Array!bool) m_buttonStates;
     Array!bool m_mouseButtonStates;
     Vector2D m_mousePosition;
+    Uint8* m_keystates;
 
     bool m_bJoysticksInitialized;
     JoystickList m_joysticks;
     static InputHandler s_instance;
     int m_joystickDeadZone = 10000;
+
 
 }

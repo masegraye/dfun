@@ -141,6 +141,20 @@ class Player : SDLGameObject {
 
 private:
     void handleInput() {
+
+        if (InputHandler.Instance.isKeyDown(SDL_SCANCODE_RIGHT)) {
+            m_velocity.x = 2;
+        } else if (InputHandler.Instance.isKeyDown(SDL_SCANCODE_LEFT)) {
+            m_velocity.x = -2;
+        }
+
+        if (InputHandler.Instance.isKeyDown(SDL_SCANCODE_UP)) {
+            m_velocity.y = -2;
+        } else if (InputHandler.Instance.isKeyDown(SDL_SCANCODE_DOWN)) {
+            m_velocity.y = 2;
+        }
+
+
         if (InputHandler.Instance.joysticksInitialized()) {
             if (InputHandler.Instance.xvalue(0, 1) > 0 ||
                 InputHandler.Instance.xvalue(0, 1) < 0) {
