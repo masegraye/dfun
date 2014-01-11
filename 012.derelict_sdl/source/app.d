@@ -5,6 +5,7 @@ import derelict.sdl2.sdl;
 import derelict.sdl2.image;
 
 import play.d;
+import demo;
 
 
 shared static this() {
@@ -22,6 +23,10 @@ int main()
     if (!Game.Instance().initialize("WOO!", 100, 100, 640, 480)) {
         return 1;
     }
+
+
+    TextureManager.Instance.load("public/assets/claudius.png", "claudius", Game.Instance.renderer);
+    Game.Instance.addGameObject(new Player(LoaderParams(100, 100, 32, 60, "claudius")));
 
     while(Game.Instance().running) {
         frameStart = SDL_GetTicks();

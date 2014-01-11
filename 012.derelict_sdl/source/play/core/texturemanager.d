@@ -15,11 +15,11 @@ class TextureManager {
         return s_instance;
     }
 
-    bool load(string fileName, string id, SDL_Renderer* pRenderer) {
+    bool load(string fileName, string id, const(SDL_Renderer)* pRenderer) {
 
         SDL_Surface* pTempSurface = IMG_Load("./public/assets/claudius.png");
 
-        SDL_Texture* pTexture = SDL_CreateTextureFromSurface(pRenderer, pTempSurface);
+        SDL_Texture* pTexture = SDL_CreateTextureFromSurface(cast(SDL_Renderer*)pRenderer, pTempSurface);
 
         SDL_FreeSurface(pTempSurface);
 
@@ -34,7 +34,7 @@ class TextureManager {
     void draw(string id,
         int x, int y,
         int width, int height,
-        SDL_Renderer* pRenderer,
+        const(SDL_Renderer)* pRenderer,
         SDL_RendererFlip flip = SDL_FLIP_NONE) {
 
         SDL_Rect srcRect;
@@ -46,7 +46,7 @@ class TextureManager {
         destRect.x = x;
         destRect.y = y;
 
-        SDL_RenderCopyEx(pRenderer, m_textureMap[id],
+        SDL_RenderCopyEx(cast(SDL_Renderer*)pRenderer, m_textureMap[id],
             &srcRect, &destRect,
             0.0, cast(SDL_Point*)0,
             flip);
@@ -70,7 +70,7 @@ class TextureManager {
         destRect.x = x;
         destRect.y = y;
 
-        SDL_RenderCopyEx(cast(SDL_Renderer*) pRenderer, m_textureMap[id],
+        SDL_RenderCopyEx(cast(SDL_Renderer*)pRenderer, m_textureMap[id],
             &srcRect, &destRect,
             0.0, cast(SDL_Point*) 0,
             flip);
