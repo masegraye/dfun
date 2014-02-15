@@ -24,7 +24,6 @@ int main()
         return 1;
     }
 
-
     TextureManager.Instance.load("public/assets/claudius.png", "claudius", Game.Instance.renderer);
     Game.Instance.addGameObject(new Player(LoaderParams(100, 100, 32, 60, "claudius")));
 

@@ -45,6 +45,7 @@ class Game {
         } else {
             return false;
         }
+
         InputHandler.Instance.intializeJoysticks();
 
         m_bRunning = true;
@@ -57,10 +58,6 @@ class Game {
 
         // clear the window to black
         SDL_RenderClear(m_pRenderer);
-
-        //TextureManager.Instance().draw("claudius", 0, 0, 32, 60, m_pRenderer);
-
-        //TextureManager.Instance().drawFrame("claudius", 120, 240, 32, 60, 1, m_currentFrame, m_pRenderer);
 
         foreach(GameObject obj ; m_gameObjects) {
             obj.draw();

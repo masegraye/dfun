@@ -47,36 +47,52 @@ struct Vector2D {
     }
 
     /**
-        Addition
+     *  Addition/subtraction
      */
-    Vector2D opBinary(string op)(Vector2D other) if (op == "+") {
-        return Vector2D(m_x + other.m_x, m_y + other.m_y);
+    Vector2D opBinary(string op)(Vector2D other) if (op == "+" || op == "-") {
+        return mixin("Vector2D(m_x "~ op ~" other.m_x, m_y "~ op ~" other.m_y)");
     }
 
     /**
-        In-place addition
+     *  In-place addition/subtraction
      */
-    ref Vector2D opOpAssign(string op)(Vector2D other) if (op == "+") {
-        m_x += other.m_x;
-        m_y += other.m_y;
+    ref Vector2D opOpAssign(string op)(Vector2D other) if (op == "+" || op == "-") {
+        mixin("m_x "~ op ~"= other.m_x; m_y "~ op ~"= other.m_y;");
         return this;
     }
 
-    /**
-        Subtraction
-     */
-    Vector2D opBinary(string op)(Vector2D other) if (op == "-") {
-        return Vector2D(m_x - other.m_x, m_y - other.m_y);
-    }
 
-    ref Vector2D opOpAssign(string op)(Vector2D other) if (op == "-") {
-        m_x -= other.m_x;
-        m_y -= other.m_y;
-        return this;
-    }
+    ///**
+    // *  Addition
+    // */
+    //Vector2D opBinary(string op)(Vector2D other) if (op == "+") {
+    //    return Vector2D(m_x + other.m_x, m_y + other.m_y);
+    //}
+
+    ///**
+    // *  In-place addition
+    // */
+    //ref Vector2D opOpAssign(string op)(Vector2D other) if (op == "+") {
+    //    m_x += other.m_x;
+    //    m_y += other.m_y;
+    //    return this;
+    //}
+
+    ///**
+    // *  Subtraction
+    // */
+    //Vector2D opBinary(string op)(Vector2D other) if (op == "-") {
+    //    return Vector2D(m_x - other.m_x, m_y - other.m_y);
+    //}
+
+    //ref Vector2D opOpAssign(string op)(Vector2D other) if (op == "-") {
+    //    m_x -= other.m_x;
+    //    m_y -= other.m_y;
+    //    return this;
+    //}
 
     /**
-        Multiplication
+     *  Multiplication
      */
     Vector2D opBinary(string op)(float scalar) if (op == "*") {
         return Vector2D(m_x * scalar, m_y * scalar);
@@ -90,7 +106,7 @@ struct Vector2D {
 
 
     /**
-        Division
+     *  Division
      */
     Vector2D opBinary(string op)(float scalar) if (op == "/") {
         return Vector2D(m_x / scalar, m_y / scalar);

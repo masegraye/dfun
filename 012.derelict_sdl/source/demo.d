@@ -1,7 +1,6 @@
 import play.d;
 import derelict.sdl2.sdl;
 
-
 class Player : SDLGameObject {
     this(LoaderParams params) {
         super(params);
