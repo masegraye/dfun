@@ -1,2 +1,3 @@
 .dub
 *.o
+package.userprefs
