@@ -1,0 +1,12 @@
+{
+	"name": "014.msgpack_test",
+	"description": "A project to test out msgpack-d",
+	"homepage": "http://m453.io",
+	"copyright": "Copyright © 2014, Mason Browne",
+	"authors": [
+		"Your Name"
+	],
+	"dependencies": {
+		"msgpack-d" : "~master"
+	}
+}
