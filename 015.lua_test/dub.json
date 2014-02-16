@@ -1,0 +1,9 @@
+{
+	"name": "015.lua_test",
+	"description": "A minimal D application.",
+	"copyright": "Copyright © 2014, maseb",
+	"authors": ["maseb"],
+	"dependencies": {
+		"derelict-lua": "~master"
+	}
+}
