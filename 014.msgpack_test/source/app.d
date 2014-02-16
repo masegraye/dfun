@@ -17,6 +17,6 @@ void main()
 
     assert(target.x == input.x);
     assert(target.y == input.y);
-assert(target.z == input.z);
+    assert(target.z == input.z);
 
 }
